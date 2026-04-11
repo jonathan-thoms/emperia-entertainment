@@ -1,26 +1,231 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* ── Tailwind v4 Theme — Obsidian Curator Tokens ────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Surface System */
+  --color-void: #131313;
+  --color-surface: #131313;
+  --color-surface-dim: #131313;
+  --color-surface-bright: #393939;
+  --color-surface-variant: #353534;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container: #201f1f;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353534;
+
+  /* Gold — Primary Brand */
+  --color-gold: #F2CA50;
+  --color-gold-container: #D4AF37;
+  --color-gold-on: #3C2F00;
+
+  /* Purple — Secondary Brand */
+  --color-purple: #ECB1FF;
+  --color-purple-container: #D05BFF;
+  --color-purple-on: #520070;
+
+  /* Blue — Tertiary */
+  --color-blue: #BFCDFF;
+  --color-blue-container: #97B0FF;
+
+  /* Text */
+  --color-on-surface: #E5E2E1;
+  --color-on-surface-variant: #D0C5AF;
+  --color-outline: #99907C;
+  --color-outline-variant: #4D4635;
+
+  /* Semantic */
+  --color-error: #FFB4AB;
+  --color-error-container: #93000A;
+
+  /* Fonts */
+  --font-serif: "Noto Serif", Georgia, serif;
+  --font-sans: "Manrope", system-ui, sans-serif;
+
+  /* Shadows */
+  --shadow-luxe: 0px 24px 48px rgba(0, 0, 0, 0.5), 0px 4px 12px rgba(191, 0, 255, 0.08);
+  --shadow-glow-gold: 0 0 30px rgba(242, 202, 80, 0.15);
+  --shadow-glow-purple: 0 0 20px rgba(208, 91, 255, 0.2);
+
+  /* Timing */
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base Styles ────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #131313;
+  color: #E5E2E1;
+  font-family: "Manrope", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Selection ──────────────────────────────────────────────────────────────── */
+::selection {
+  background-color: rgba(208, 91, 255, 0.3);
+  color: #E5E2E1;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0e0e0e;
+}
+::-webkit-scrollbar-thumb {
+  background: #4D4635;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #99907C;
+}
+
+/* ── Glassmorphism Utility ──────────────────────────────────────────────────── */
+.glass {
+  background: rgba(53, 53, 52, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(77, 70, 53, 0.2);
+}
+
+.glass-strong {
+  background: rgba(53, 53, 52, 0.65);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(77, 70, 53, 0.25);
+}
+
+/* ── Ghost Border Utility ───────────────────────────────────────────────────── */
+.ghost-border {
+  border: 1px solid rgba(77, 70, 53, 0.15);
+}
+
+/* ── Gold Gradient Button ───────────────────────────────────────────────────── */
+.btn-gold {
+  background: linear-gradient(135deg, #F2CA50, #D4AF37);
+  color: #3C2F00;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-gold:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 30px rgba(242, 202, 80, 0.25);
+}
+
+/* ── Purple Ghost Button ────────────────────────────────────────────────────── */
+.btn-ghost {
+  background: transparent;
+  color: #ECB1FF;
+  border: 1px solid #99907C;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-ghost:hover {
+  border-color: #D05BFF;
+  box-shadow: 0 0 20px rgba(208, 91, 255, 0.2);
+}
+
+/* ── Headline Typography ────────────────────────────────────────────────────── */
+.display-lg {
+  font-family: "Noto Serif", Georgia, serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  color: #E5E2E1;
+}
+
+.headline-lg {
+  font-family: "Noto Serif", Georgia, serif;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+  color: #E5E2E1;
+}
+
+.label-upper {
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Fade-in Animation ──────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+
+.animate-fade-up-delay-1 {
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  opacity: 0;
+}
+.animate-fade-up-delay-2 {
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+  opacity: 0;
+}
+.animate-fade-up-delay-3 {
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+  opacity: 0;
+}
+.animate-fade-up-delay-4 {
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+  opacity: 0;
+}
+.animate-fade-up-delay-5 {
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
+  opacity: 0;
+}
+
+/* ── Ambient glow pulse ─────────────────────────────────────────────────────── */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+.glow-pulse {
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+/* ── Shimmer for loading states ─────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #1c1b1b 25%,
+    #2a2a2a 50%,
+    #1c1b1b 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
 }
