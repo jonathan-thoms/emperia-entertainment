@@ -1,7 +1,6 @@
 "use server";
 
-import { db } from "@/lib/firebase";
-import { collection, doc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { adminDb } from "@/lib/firebase-admin";
 
 type ActionResult = { success: true; id?: string } | { success: false; error: string };
 
@@ -22,12 +21,12 @@ export async function createEvent(input: EventInput): Promise<ActionResult> {
       return { success: false, error: "Missing required fields." };
     }
 
-    const eventRef = doc(collection(db, "events"));
-    await setDoc(eventRef, {
+    const eventRef = adminDb.collection("events").doc();
+    await eventRef.set({
       ...input,
       ticketsSold: 0,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     return { success: true, id: eventRef.id };
@@ -41,10 +40,10 @@ export async function updateEvent(eventId: string, input: Partial<EventInput>): 
   try {
     if (!eventId) return { success: false, error: "Missing eventId." };
 
-    const eventRef = doc(db, "events", eventId);
-    await updateDoc(eventRef, {
+    const eventRef = adminDb.collection("events").doc(eventId);
+    await eventRef.update({
       ...input,
-      updatedAt: serverTimestamp(),
+      updatedAt: new Date(),
     });
 
     return { success: true };
@@ -58,8 +57,8 @@ export async function deleteEvent(eventId: string): Promise<ActionResult> {
   try {
     if (!eventId) return { success: false, error: "Missing eventId." };
 
-    const eventRef = doc(db, "events", eventId);
-    await deleteDoc(eventRef);
+    const eventRef = adminDb.collection("events").doc(eventId);
+    await eventRef.delete();
 
     return { success: true };
   } catch (err: unknown) {

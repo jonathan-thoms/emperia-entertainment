@@ -16,12 +16,14 @@ function getAdminApp() {
     return getApps()[0];
   }
 
+  const rawKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY ?? "";
+  // Handle both \\n (literal from .env) and actual newlines
+  const privateKey = rawKey.replace(/\\n/g, "\n");
+
   const serviceAccount: ServiceAccount = {
     projectId: process.env.FIREBASE_ADMIN_PROJECT_ID!,
     clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL!,
-    // The private key is stored as a single-line string in .env with literal \n.
-    // We need to replace those with actual newlines.
-    privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY!.replace(/\\n/g, "\n"),
+    privateKey,
   };
 
   return initializeApp({ credential: cert(serviceAccount) });
