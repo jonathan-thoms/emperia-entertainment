@@ -5,9 +5,7 @@ import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 // ── Stripe SDK (server-side only) ──────────────────────────────────────────────
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-04-10",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // ── Standardised response shape (per coding-skills §3) ────────────────────────
 type ActionResult =

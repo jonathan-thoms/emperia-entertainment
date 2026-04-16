@@ -22,12 +22,14 @@ import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
+export type UserRole = "customer" | "admin" | "scanner";
+
 export interface UserProfile {
   uid: string;
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
-  role: "customer" | "admin";
+  role: UserRole;
 }
 
 interface AuthContextType {
@@ -41,6 +43,29 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+/** Write the role into a cookie so proxy.ts can read it server-side. */
+function setRoleCookie(role: UserRole) {
+  document.cookie = `__session_role=${role};path=/;max-age=${60 * 60 * 24 * 14};samesite=lax`;
+}
+
+/** Clear the role cookie on sign-out. */
+function clearRoleCookie() {
+  document.cookie = "__session_role=;path=/;max-age=0";
+}
+
+/** Determine the post-login redirect based on the user's role. */
+export function getRedirectForRole(role: UserRole): string {
+  switch (role) {
+    case "admin":
+      return "/admin";
+    case "scanner":
+      return "/scanner";
+    default:
+      return "/events";
+  }
+}
 
 // ── Provider ───────────────────────────────────────────────────────────────────
 const googleProvider = new GoogleAuthProvider();
@@ -57,13 +82,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (userSnap.exists()) {
       const data = userSnap.data();
-      return {
+      const role: UserRole = (data.role as UserRole) ?? "customer";
+      const p: UserProfile = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         displayName: data.displayName ?? firebaseUser.displayName,
         photoURL: data.photoURL ?? firebaseUser.photoURL,
-        role: data.role ?? "customer",
+        role,
       };
+      setRoleCookie(role);
+      return p;
     }
 
     // First-time user — create doc
@@ -80,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       createdAt: serverTimestamp(),
     });
 
+    setRoleCookie("customer");
     return newProfile;
   }, []);
 
@@ -98,6 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUser(null);
         setProfile(null);
+        clearRoleCookie();
       }
       setLoading(false);
     });
@@ -147,6 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ── Sign out ───────────────────────────────────────────────────────────────
   const signOut = useCallback(async () => {
+    clearRoleCookie();
     await firebaseSignOut(auth);
   }, []);
 

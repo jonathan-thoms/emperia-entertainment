@@ -1,14 +1,23 @@
 "use client";
 
 import { useAuth } from "@/lib/auth-context";
+import type { UserRole } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 interface AuthGuardProps {
   children: React.ReactNode;
-  requiredRole?: "admin" | "customer";
+  /** The minimum role required to view this page. */
+  requiredRole?: UserRole;
 }
 
+/**
+ * Client-side RBAC guard.
+ *
+ * - `requiredRole="admin"` → only admins
+ * - `requiredRole="scanner"` → scanners AND admins
+ * - `requiredRole="customer"` or omitted → any authenticated user
+ */
 export default function AuthGuard({ children, requiredRole }: AuthGuardProps) {
   const { user, profile, loading } = useAuth();
   const router = useRouter();
@@ -16,16 +25,30 @@ export default function AuthGuard({ children, requiredRole }: AuthGuardProps) {
   useEffect(() => {
     if (loading) return;
 
+    // Not logged in — go to login
     if (!user) {
       router.replace("/login");
       return;
     }
 
-    if (requiredRole === "admin" && profile?.role !== "admin") {
+    if (!profile) return; // still resolving profile
+
+    const role = profile.role;
+
+    // Admin-only pages
+    if (requiredRole === "admin" && role !== "admin") {
+      router.replace(role === "scanner" ? "/scanner" : "/");
+      return;
+    }
+
+    // Scanner pages — allow scanner + admin
+    if (requiredRole === "scanner" && role !== "scanner" && role !== "admin") {
       router.replace("/");
+      return;
     }
   }, [user, profile, loading, requiredRole, router]);
 
+  // ── Loading state ──────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-void">
@@ -37,8 +60,13 @@ export default function AuthGuard({ children, requiredRole }: AuthGuardProps) {
     );
   }
 
+  // ── Gate rendering ─────────────────────────────────────────────────────────
   if (!user) return null;
-  if (requiredRole === "admin" && profile?.role !== "admin") return null;
+  if (!profile) return null;
+
+  const role = profile.role;
+  if (requiredRole === "admin" && role !== "admin") return null;
+  if (requiredRole === "scanner" && role !== "scanner" && role !== "admin") return null;
 
   return <>{children}</>;
 }

@@ -4,9 +4,7 @@ import { adminDb } from "@/lib/firebase-admin";
 import { randomUUID } from "crypto";
 
 // ── Stripe SDK (server-side) ─────────────────────────────────────────────────
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-04-10",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
