@@ -5,10 +5,11 @@ const config: CapacitorConfig = {
   appName: "Emperia Scanner",
   webDir: "out",
   server: {
-    // During development, point to the Next.js dev server
-    // Comment this out for production builds
-    // url: "http://localhost:3000",
-    // cleartext: true,
+    // During development, point to the Next.js dev server on the LAN.
+    // Your phone must be on the same WiFi network.
+    // Comment this out and use webDir for production builds.
+    url: "http://192.168.1.6:3000/scanner",
+    cleartext: true,
   },
   plugins: {
     Camera: {
