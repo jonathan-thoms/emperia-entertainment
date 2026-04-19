@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { deleteEvent } from "@/actions/events";
-import AuthGuard from "@/components/AuthGuard";
-import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
 interface Event {
@@ -18,7 +16,7 @@ interface Event {
   ticketsSold: number;
 }
 
-function EventsManager() {
+export default function AdminEventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,11 +43,11 @@ function EventsManager() {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-10">
+    <div className="p-6 lg:p-10 max-w-[1440px] mx-auto">
+      <div className="flex items-center justify-between mb-10 animate-fade-up">
         <div>
-          <span className="label-upper text-gold tracking-[0.12em] mb-3 block">Admin</span>
-          <h1 className="headline-lg">Manage Events</h1>
+          <span className="label-upper text-purple-container tracking-[0.12em] mb-2 block">Management</span>
+          <h1 className="headline-lg">Events</h1>
         </div>
         <Link href="/admin/events/new" className="btn-gold px-6 py-3 rounded-xl text-xs" id="new-event-btn">
           + New Event
@@ -57,14 +55,16 @@ function EventsManager() {
       </div>
 
       {loading ? (
-        <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-20 rounded-xl shimmer" />)}</div>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => <div key={i} className="h-20 rounded-xl shimmer" />)}
+        </div>
       ) : events.length === 0 ? (
         <div className="text-center py-20">
           <p className="font-serif text-xl text-on-surface mb-2">No events created yet</p>
           <p className="text-sm text-on-surface-variant">Click &quot;+ New Event&quot; to get started.</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 animate-fade-up-delay-1">
           {events.map((e) => (
             <div key={e.id} className="bg-surface-container-low rounded-xl p-5 flex items-center justify-between gap-4 hover:bg-surface-container-high transition-colors duration-300">
               <div className="flex-1 min-w-0">
@@ -101,15 +101,3 @@ function EventsManager() {
   );
 }
 
-export default function AdminEventsPage() {
-  return (
-    <AuthGuard requiredRole="admin">
-      <Navbar />
-      <main className="min-h-screen pt-28 pb-[120px]">
-        <div className="mx-auto max-w-4xl px-6 lg:px-10">
-          <EventsManager />
-        </div>
-      </main>
-    </AuthGuard>
-  );
-}
